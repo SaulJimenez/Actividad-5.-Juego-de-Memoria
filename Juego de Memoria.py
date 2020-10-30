@@ -1,3 +1,9 @@
+# Actividad 5 - Juego Memoria.
+# Autores: Leonardo Delgado Rios-A00827915, Saul Jimenez Torres-A01283849.
+# Aplicacion que desarrolla un juego de memoria. 
+# Fecha de ultima modificacion: 10/30/2020.
+# Se importan las librerias que se utilizaran para el correcto desarrollo de
+# la aplicación.
 from random import *
 from turtle import *
 from freegames import path
@@ -7,6 +13,8 @@ tiles = list(range(32)) * 2
 state = {'mark': None}
 hide = [True] * 64
 
+# Funcion que dirige en que direccion x,y se dibujan los segmentos de recuadros
+# blancos con delineado negro.
 def square(x, y):
     "Draw white square with black outline at (x, y)."
     up()
@@ -22,6 +30,7 @@ def square(x, y):
 def index(x, y):
     "Convert (x, y) coordinates to tiles index."
     return int((x + 200) // 50 + ((y + 200) // 50) * 8)
+
 
 def xy(count):
     "Convert tiles count to (x, y) coordinates."
@@ -39,6 +48,9 @@ def tap(x, y):
         hide[mark] = False
         state['mark'] = None
 
+        
+# Funcion que asigna recuadros de color blanco con delineado negro donde se segmentan
+# las diferentes partes del juego de memoria.
 def draw():
     "Draw image and tiles."
     clear()
@@ -63,6 +75,7 @@ def draw():
     update()
     ontimer(draw, 100)
 
+# Aqui se hace el llamado a las funciones junto con el tamaño de la ventana de juego.
 shuffle(tiles)
 setup(420, 420, 370, 0)
 addshape(car)
