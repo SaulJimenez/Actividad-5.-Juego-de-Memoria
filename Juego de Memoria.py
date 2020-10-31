@@ -109,6 +109,7 @@ def draw():
         write("Has ganado. Felicidades!", font=('Arial', 25, 'normal'))
         goto(-150,-30)
         write("Numero de taps: %.f" %(numtaps['taps']), font=('Arial', 25, 'normal'))
+        return
         
     update()
     ontimer(draw, 100)
