@@ -8,13 +8,18 @@ from random import *
 from turtle import *
 from freegames import path
 
+# Se definen los valores default de las variables a utilizar, en este caso la
+# imagen a utilizar, el total de cuadrados que conformaran el juego de memoria
+# y el estado de cada una de los cuadrados
 car = path('car.gif')
 tiles = list(range(32)) * 2
 state = {'mark': None}
+numtaps = {'taps': 0}
 hide = [True] * 64
+check = [False] * 64
 
-# Funcion que dirige en que direccion x,y se dibujan los segmentos de recuadros
-# blancos con delineado negro.
+# Funcion square, se encarga de dibujar los segmentos de recuadros blancos con
+# delineado negro.
 def square(x, y):
     "Draw white square with black outline at (x, y)."
     up()
@@ -27,15 +32,22 @@ def square(x, y):
         left(90)
     end_fill()
 
+# Funcion index, convierte las coordenadas de x y y, en un indice para agregar
+# posteriormente el número o bien el estado de cada cuadrado.
 def index(x, y):
     "Convert (x, y) coordinates to tiles index."
     return int((x + 200) // 50 + ((y + 200) // 50) * 8)
 
 
+# Funcion xy, convierte el total de cuadrados en coordenadas x y y.
 def xy(count):
     "Convert tiles count to (x, y) coordinates."
     return (count % 8) * 50 - 200, (count // 8) * 50 - 200
 
+# Funcion tap, encargada de cambiar el estado de los cuadrados, es decir, en
+# caso de que se encuentre la pareja del número seleccionado, convierte el
+# valor booleano de la lista hide a false, debido a que se elimina el cuadrado
+# blanco y muestra la parte de la imagen.
 def tap(x, y):
     "Update mark and hidden tiles based on tap."
     spot = index(x, y)
@@ -47,17 +59,20 @@ def tap(x, y):
         hide[spot] = False
         hide[mark] = False
         state['mark'] = None
-
+    numtaps['taps'] += 1
         
-# Funcion que asigna recuadros de color blanco con delineado negro donde se segmentan
-# las diferentes partes del juego de memoria.
+# Funcion draw, encargada de dibujar los cuadros de color blanco con delineado
+# negro donde se segmentan las diferentes partes del juego de memoria.
 def draw():
     "Draw image and tiles."
     clear()
     goto(0, 0)
     shape(car)
     stamp()
-
+    
+    # Iteracion dentro la cual verifica el estado de cada uno de las tiles, en
+    # caso de que el valor booleano del estado de una tile sea falso, no
+    # dibujara el cuadro blanco, por lo que se mostrara parte de la imagen.
     for count in range(64):
         if hide[count]:
             x, y = xy(count)
@@ -65,17 +80,41 @@ def draw():
 
     mark = state['mark']
 
+    # Mientras el valor a dibujar sea diferente de null, para esta actividad
+    # el valor se encuentre en un rango de 0 - 32, y que el estado del tile
+    # en la lista hide sea true, dibujara el numero asignado a esa tile. Ademas
+    # se mostrara el numero de taps que se han realizado al momento en la parte
+    # superior derecha del cuadro blanco.
     if mark is not None and hide[mark]:
         x, y = xy(mark)
         up()
-        goto(x + 2, y)
+        if 0 <= tiles[mark] < 10:
+            goto(x + 17, y + 5)
+        else:
+            goto(x + 7, y + 4)
         color('black')
-        write(tiles[mark], font=('Arial', 30, 'normal'))
-
+        write(tiles[mark], font=('Arial', 25, 'normal'))
+        goto(x + 30, y + 36)
+        write(numtaps['taps'])
+    
+    # Variable check se define con un valor default similar a hide sin embargo
+    # esta con false en lugar de true, conforme se encuentren las parejas los
+    # valores en hide se volveran false, por lo que si hide es igual a false
+    # nos indicara que todas las parejas fueron encontradas, en cuyo caso se
+    # termina la ejecucion mostrando un mensaje y el numero de taps totales.
+    if hide == check:
+        clear()
+        up()
+        goto(-180,0)
+        write("Has ganado. Felicidades!", font=('Arial', 25, 'normal'))
+        goto(-150,-30)
+        write("Numero de taps: %.f" %(numtaps['taps']), font=('Arial', 25, 'normal'))
+        
     update()
     ontimer(draw, 100)
 
-# Aqui se hace el llamado a las funciones junto con el tamaño de la ventana de juego.
+# Aqui se realiza la configuracion de la ventana donde se desarrollara el juego
+# ademas se hace el llamado a la funcion draw para ejecutar la aplicacion.
 shuffle(tiles)
 setup(420, 420, 370, 0)
 addshape(car)
